@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" style="width: 100%;height: 100%;margin: 0;">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            float: left;
+            position: relative;
+        }
+    </style>
+</head>
+<body style="width: 100%;height: 100%;background-color: aliceblue;margin: 0;">
+<div style="margin: 100px 0 0 25%;width: 50%">
+    <label for="Data" style="width: 100%;">Data to encode : </label>
+    <textarea id="Data" cols="50" style="width: 100%;resize: vertical;margin-bottom: 20px;"></textarea>
+
+    <div style="width: 100%;margin-bottom: 20px;">
+        <label for="LightColor" style="width: 100px;">Light Color :</label>
+        <input id="LightColor" value="white" style="width: calc(50% - 120px);">
+
+        <label for="DarkColor" style="width: 100px; margin-left: 10px">Dark Color :</label>
+        <input id="DarkColor" value="Black" style="width: calc(50% - 100px);">
+    </div>
+
+    <div style="width: 100%;margin-bottom: 20px;">
+        <label for="Format" style="width: 100px;">Format image :</label>
+        <select id="Format" style="width: 50%;">
+            <option value="bmp">bmp</option>
+            <option value="gif">gif</option>
+            <option value="jpeg">jpeg</option>
+            <option value="jpg">jpg</option>
+            <option value="png">png</option>
+            <option value="svg+xml">svg+xml</option>
+            <option value="tiff">tiff</option>
+            <option value="webp">webp</option>
+            <option value="x-icon">x-icon</option>
+        </select>
+    </div>
+    <div style="width: 100%;margin-bottom: 20px;">
+        <label for="Error" style="width: 100px;">Error Correction Level :</label>
+        <select id="Error" style="width: 50%;">
+            <option value="0">L</option>
+            <option value="1">M</option>
+            <option value="2">Q</option>
+            <option value="3">H</option>
+        </select>
+    </div>
+
+    <div style="width: 100%;margin-bottom: 20px;">
+        <label for="Mask" style="width: 100px;">Mask :</label>
+        <select id="Mask" style="width: 50%;">
+            <option value="-1">Auto</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+        </select>
+    </div>
+    <div style="width: 100%;margin-bottom: 20px;">
+        <label for="Mode" style="width: 100px;">Mode :</label>
+        <select id="Mode" style="width: 50%;">
+            <option value="-1">Auto</option>
+            <option value="1">Numeric</option>
+            <option value="2">AlphaNum</option>
+            <option value="4">8-Bit Byte</option>
+            <option value="7">ECI - UTF-8</option>
+        </select>
+    </div>
+    <div style="width: 100%;margin-bottom: 20px;">
+        <label for="Width" style="width: 100px;">Width :</label>
+        <input id="Width" value="300" style="width: calc(50% - 120px);" type="number">
+        <label for="Version" style="width: 100px; margin-left: 10px">Version :</label>
+        <select id="Version" style="width: calc(50% - 100px);">
+            <option value="-1">Auto</option>
+        </select>
+    </div>
+
+    <button onclick="generateQRCode()">Generate</button>
+    <div id="image" style="margin: 20px;">
+    </div>
+
+</div>
+<script src="MyVanillaQR.js"></script>
+<script type="application/javascript">
+    var qr = new MyVanillaQR({str:'INIT Exemp',
+        version:2,
+        errorCorrect:errorCorrectLevel.M,
+        mask:5,
+        width:200,
+        mode:modeCode.ECI,
+        ECICode:'000026',
+        format:'jpg',
+    });
+
+    var qrcode = qr.getImage();
+    qrcode.id = 'qrcode';
+    document.getElementById('image').appendChild(qrcode);
+
+    for(var i = 1; i < 41; i++){
+        var option = document.createElement('option');
+        option.innerText = i;
+        option.value = i;
+        document.getElementById('Version').appendChild(option);
+    }
+
+    function generateQRCode() {
+        qr.str = document.getElementById('Data').value;
+        qr.colors = [document.getElementById('LightColor').value,document.getElementById('DarkColor').value];
+        qr.format = document.getElementById('Format').options[document.getElementById('Format').selectedIndex].value;
+        qr.errorCorrect = parseInt(document.getElementById('Error').options[document.getElementById('Error').selectedIndex].value);
+        qr.mask = parseInt(document.getElementById('Mask').options[document.getElementById('Mask').selectedIndex].value);
+        qr.width = parseInt(document.getElementById('Width').value);
+        qr.version = parseInt(document.getElementById('Version').options[document.getElementById('Version').selectedIndex].value);
+        qr.mode = parseInt(document.getElementById('Mode').options[document.getElementById('Mode').selectedIndex].value);
+        if(qr.mode == 7){
+            qr.ECICode = '000026';
+        }
+        qr.generateQR();
+        try{
+            document.getElementById('image').removeChild(document.getElementById('qrcode'));
+        }
+        catch (e){
+
+        }
+
+        var qrcode = qr.getImage();
+        qrcode.id = 'qrcode';
+        document.getElementById('image').appendChild(qrcode);
+
+    }
+    //document.body.appendChild(qr.getImage('jpeg'));
+
+</script>
+</body>
+</html>
