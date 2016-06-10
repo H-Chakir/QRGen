@@ -95,6 +95,7 @@
         mode:modeCode.ECI,
         ECICode:'000026',
         format:'jpg',
+        colors:['#FF0000','black']
     });
 
     var qrcode = qr.getImage();
@@ -133,8 +134,6 @@
         document.getElementById('image').appendChild(qrcode);
 
     }
-    //document.body.appendChild(qr.getImage('jpeg'));
-
 </script>
 </body>
 </html>

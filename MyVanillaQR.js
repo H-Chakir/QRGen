@@ -1383,7 +1383,3 @@ function MyVanillaQR(options) {
     this.generateQR(this.str);
 
 }
-
-
-
-
