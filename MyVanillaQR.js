@@ -350,6 +350,7 @@ function MyVanillaQR(options) {
     this.mask = -1;
     this.version = -1;
     this.width = 300;
+    this.image = null;
     this.format = '';
     this.errorCorrect = errorCorrectLevel.H;
     this.ECICode = '';
@@ -360,6 +361,7 @@ function MyVanillaQR(options) {
         this.mask = options.mask || -1;
         this.mode = options.mode || -1;
         this.colors = options.colors || ['white','black'];
+        this.image = options.image || null;
         this.version = options.version || -1;
         this.format = options.format || -1;
         this.errorCorrect = options.errorCorrect || errorCorrectLevel.H;
@@ -1304,12 +1306,28 @@ function MyVanillaQR(options) {
                     }
                 }
             }
+
+            if(this.image){
+                var base_image = new Image();
+                base_image.src = this.image.src;
+                var size =  Math.floor(((this.version - 1) * 4 + 21)*((this.image.size?this.image.size:20)/100));
+                var x = typeof (this.image.x) !== 'undefined'?Math.floor(ctx.canvas.width * (this.image.x/100)):Math.floor((ctx.canvas.width - moduleHeight * size)/2);
+                var y = typeof (this.image.y) !== 'undefined'?Math.floor(ctx.canvas.width * (this.image.y/100)):Math.floor((ctx.canvas.width - moduleHeight * size)/2);
+                base_image.onload = function(){
+                    ctx.drawImage(base_image, x ,  y ,  moduleHeight * size,  moduleHeight * size);
+                };
+                base_image.onload();
+
+            }
+
+            return canvas;
         }
         else{
             return false;
         }
 
-        return canvas;
+
+
     };
 
     this.getImage = function() {
@@ -1318,6 +1336,7 @@ function MyVanillaQR(options) {
         if(!canvas) {
            return;
         }
+
 
         //Check image output type
         var dataType = this.imageTypes[this.format];

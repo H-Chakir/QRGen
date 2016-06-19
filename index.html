@@ -37,6 +37,12 @@
             <option value="x-icon">x-icon</option>
         </select>
     </div>
+
+    <div style="width: 100%;margin-bottom: 20px;">
+        <label for="Image" style="width: 100px;">Logo :</label>
+        <input id="Image" type="file" accept="image/*" style="width: 50%;">
+    </div>
+
     <div style="width: 100%;margin-bottom: 20px;">
         <label for="Error" style="width: 100px;">Error Correction Level :</label>
         <select id="Error" style="width: 50%;">
@@ -81,26 +87,36 @@
     </div>
 
     <button onclick="generateQRCode()">Generate</button>
-    <div id="image" style="margin: 20px;">
+    <div id="imageQR" style="margin: 20px;">
     </div>
 
 </div>
 <script src="MyVanillaQR.js"></script>
 <script type="application/javascript">
-    var qr = new MyVanillaQR({str:'INIT Exemp',
+    var qr = new MyVanillaQR({str:'INIT Example',
+        // version if not specified it will chosse the lowest version that can support it
         version:2,
+        // Error correction level, auto = H
         errorCorrect:errorCorrectLevel.M,
+        // mask if not specified it will choose the mask with the lowest penalty score
         mask:5,
+        // width of the QR code
         width:200,
+        // encodage mode
         mode:modeCode.ECI,
+        // ECI code of the format (only 000026 = UTF-8 is supported now)
         ECICode:'000026',
+        //format
         format:'jpg',
-        colors:['#FF0000','black']
+        // colors
+        colors:['#FF0000','black'],
+        // give image source, size %, x %, y %
+        image: {src:'logo.png',size:20,x:40,y:40}
     });
 
-    var qrcode = qr.getImage();
+    var qrcode = qr.getCanvas();
     qrcode.id = 'qrcode';
-    document.getElementById('image').appendChild(qrcode);
+    document.getElementById('imageQR').appendChild(qrcode);
 
     for(var i = 1; i < 41; i++){
         var option = document.createElement('option');
@@ -111,6 +127,9 @@
 
     function generateQRCode() {
         qr.str = document.getElementById('Data').value;
+
+
+        //qr.image = {src:document.getElementById('Image').files[0].target.result};
         qr.colors = [document.getElementById('LightColor').value,document.getElementById('DarkColor').value];
         qr.format = document.getElementById('Format').options[document.getElementById('Format').selectedIndex].value;
         qr.errorCorrect = parseInt(document.getElementById('Error').options[document.getElementById('Error').selectedIndex].value);
@@ -121,19 +140,29 @@
         if(qr.mode == 7){
             qr.ECICode = '000026';
         }
-        qr.generateQR();
-        try{
-            document.getElementById('image').removeChild(document.getElementById('qrcode'));
-        }
-        catch (e){
+        // load file into preview pane
+        var reader = new FileReader();
+        reader.onload = function(e){
+            qr.image = {src:e.target.result};
+            qr.generateQR();
+            try{
+                document.getElementById('imageQR').removeChild(document.getElementById('qrcode'));
+            }
+            catch (e){
 
-        }
+            }
 
-        var qrcode = qr.getImage();
-        qrcode.id = 'qrcode';
-        document.getElementById('image').appendChild(qrcode);
+            var qrcode = qr.getImage();
+            qrcode.id = 'qrcode';
+            document.getElementById('imageQR').appendChild(qrcode);
+        };
+        reader.readAsDataURL(document.getElementById('Image').files[0]);
+
+
 
     }
 </script>
 </body>
 </html>
+
+
